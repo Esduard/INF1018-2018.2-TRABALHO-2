@@ -1,0 +1,68 @@
+
+Primeira Função customizada:
+
+function
+v0=p0 * p0
+v1=v0 + $6
+v2=v1 + v0
+ret v2
+end
+
+Para parametro = 10 -> retorno = 206 (CORRETO)
+Para parametro = 0 -> retorno = 6 (CORRETO)
+Para parametro = 209 -> retorno = 87368 (CORRETO)
+
+Segunda Função customizada:
+
+function
+v0= p0 + $15
+v1= p0 * v0
+zret v1 $1337
+v2= v1 + v1
+ret v2
+end
+
+Para parametro = 10 -> retorno = 500 (CORRETO)
+Para parametro = 0 -> retorno = 1337  (CORRETO)
+Para parametro = 250 -> retorno = 132500 (CORRETO)
+
+Terceira Função customizada:
+
+function
+v0 = p0 * $4
+zret v0 $1
+v1 = v0 + p0
+v2 = p0 * v1
+zret v2 $2
+v3 = v2 - $20
+zret v3 $3
+ret v3
+end
+
+Para parametro = 10 -> retorno = 480 (CORRETO)
+Para parametro = 2 -> retorno = 3 (CORRETO)
+Para parametro = 300 -> retorno = 449980 (CORRETO)
+Para parametro = 0 -> retorno = 1 (CORRETO)
+Para parametro = 50 -> retorno = 12480  (CORRETO)
+Para parametro = 250 -> retorno = 312480 (CORRETO)
+
+Quarta Função customizada:
+
+function
+v0 = p0 - $3
+v0 = v0 * $5
+v1 = v0 - $30
+zret v1 $1
+v2 = v1 - &10
+v0 = v2 + &5
+zret v0 v2
+ret v0
+end
+
+Para parametro = 9 -> retorno =  (CORRETO)
+Para parametro = 10 -> retorno =  (CORRETO)
+Para parametro = 11 -> retorno =  (CORRETO)
+Para parametro = 0 -> retorno =  (CORRETO)
+
+
+
