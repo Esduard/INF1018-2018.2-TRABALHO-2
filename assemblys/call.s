@@ -3,8 +3,21 @@
 .text 
 .globl foo
 
+bee:
+
+	movl $128, %eax
+	leave
+	ret
+
+add:
+
+	movl $100, %eax
+	leave
+	ret
 
 foo:
+
+	movl %edi, -0x18(%rbp)
 
 	movl %edi, %r11d
 
@@ -29,6 +42,8 @@ foo:
 	movl %eax, -0x0c(%rbp)
 	movl %eax, -0x10(%rbp)
 	movl %eax, -0x14(%rbp)
+
+	movl -0x18(%rbp), %edi
 
 	leave
 	ret

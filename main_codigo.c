@@ -11,7 +11,7 @@ int main(void) {
   funcp funcSBF;
   int res;
   /* Abre o arquivo para leitura */
-  fp = fopen("/home/ccp/c1720334/inf1018/trab2/testes/teste5.txt", "r");
+  fp = fopen("/home/eduardo/inf1018/Trab2/testes/teste5.txt", "r");
   
   /* Gera o codigo */
   gera_codigo(fp, &code, &funcSBF);

@@ -15,14 +15,14 @@ void gera_codigo (FILE *f, void **code, funcp *entry){
 
 	unsigned char* codigo;
 
-	codigo = (unsigned char *)malloc(sizeof(unsigned char) * 10000); //como determinar tamanho?
+	codigo = (unsigned char *)malloc(sizeof(unsigned char) * 1024);
 	if(codigo == NULL){
 		printf("falha na alocacao do vetor codigo\n"); 
 		exit(1);	
 	}
 
-	*code =(void*) codigo;
-	*entry =(funcp) codigo;
+	*code = codigo;
+	*entry = codigo;
 
 	int line = 1;
   	int  c;
@@ -69,7 +69,7 @@ void gera_codigo (FILE *f, void **code, funcp *entry){
 
 
 	        /* a ultima funcao que entry receber sera a "main" */
-	        *entry = (funcp)&codigo[contador_codigo];
+	        *entry = &codigo[contador_codigo];
 
 	        while(contador_atu < 8){
 	        	codigo[contador_codigo] = chamada[contador_atu];
@@ -219,6 +219,14 @@ void gera_codigo (FILE *f, void **code, funcp *entry){
 	            error("comando invalido",line);
 	          printf("%c%d = call %d %c%d\n",var0, idx0, fnum, var1, idx1);
 
+	          //salvar parametro antes de sobescrever edi
+	          unsigned  char vet_save_pilha[3] ={0x89, 0x7d, 0xe8};
+
+	          while(contador_atu < 3){
+	          	codigo[contador_codigo] = vet_save_pilha[contador_atu];contador_codigo++;contador_atu++;
+	          }
+
+
 
 	          unsigned char vet_mov_arg[3][5] ={{0x8b,0x7c,0x24,0x00},{0x00},{0xbf,0x00,0x00,0x00,0x00}};
 
@@ -246,11 +254,31 @@ void gera_codigo (FILE *f, void **code, funcp *entry){
 	          }
 	        }
 
-	        //codigo para salvar parametro em %r11d {0x41,0x89,0xfb};
+	        //vet_call[4] = {0xe8,0x00,0x00,0x00}
 
-	        //acredito que seja melhor salva na pilha 4 bytes acima de v4
-	        //salvar parametro deve ser antes de sobescrever edi
-	        //stop
+	        contador_atu = 0;
+
+	        codigo[contador_codigo] = 0xe8;contador_codigo++;contador_atu++;
+
+	        int diff = vet_fun[fnum] - vet_fun[index_fun-1];
+
+	         while(contador_atu < 4){
+	          	codigo[contador_codigo] = diff >> 8*(contador_atu-1);contador_codigo++;contador_atu++;
+	        }
+
+	        //movl %eax, pilha
+	        //vet_ret_pilha[3] ={0x89,0x45,0x00};
+
+	        codigo[contador_codigo] = 0x89;contador_codigo++;contador_atu++;
+	        codigo[contador_codigo] = 0x45;contador_codigo++;contador_atu++;
+	        codigo[contador_codigo] = 0x100 - (idx0 * 4 + 4)
+
+	        //movl -18(%rbp), %edi
+
+			codigo[contador_codigo] = 0x8b;contador_codigo++;contador_atu++;
+	        codigo[contador_codigo] = 0x7d;contador_codigo++;contador_atu++;
+	        codigo[contador_codigo] = 0xe8;contador_codigo++;contador_atu++;
+	        	        
 	        
 	    	}
 	        else { /* op aritim */
@@ -306,8 +334,8 @@ void gera_codigo (FILE *f, void **code, funcp *entry){
 	          contador_atu = 0;
 
 	          unsigned char vet_op_op2[3][3][7] ={{{0x44,0x03,0x55,0x00},{0x41,0x01,0xfa},{0x41,0x81,0xc2,0x00,0x00,0x00,0x00}},
-	          					{{0x44,0x2b,0x55,0x00},{0x41,0x29,0xfa},{0x41,0x81,0xea,0x00,0x00,0x00,0x00}},
-	          					{{0x44,0x0f,0xaf,0x55,0x00},{0x44,0x0f,0xaf,0xd7},{0x45,0x69,0xd2,0x00,0x00,0x00,0x00}}};
+	          									{{0x44,0x2b,0x55,0x00},{0x41,0x29,0xfa},{0x41,0x81,0xea,0x00,0x00,0x00,0x00}},
+	          									{{0x44,0x0f,0xaf,0x55,0x00},{0x44,0x0f,0xaf,0xd7},{0x45,0x69,0xd2,0x00,0x00,0x00,0x00}}};
 
 	          int size_vet_op_op2[3][3] = {{4,3,7},{4,3,7},{5,4,7}};
 
@@ -318,7 +346,7 @@ void gera_codigo (FILE *f, void **code, funcp *entry){
 	          if((index_varpc_2 == 2) & (multi_byte == 0)){
 	          	while(contador_atu < 4){
 	          	//printf("imprimindo elemento %02x atual = %d\n",vet_op_op2[index_op][2][contador_atu],contador_atu);
-	          	codigo[contador_codigo] = vet_op_oentryp2[index_op][2][contador_atu];contador_codigo++;contador_atu++;
+	          	codigo[contador_codigo] = vet_op_op2[index_op][2][contador_atu];contador_codigo++;contador_atu++;
 	          } 
 	          }
 	          else{
@@ -344,8 +372,8 @@ void gera_codigo (FILE *f, void **code, funcp *entry){
 	        	}
 	          	}
 	          	else{
-	          		//printf("imprimindo elemento %d em hexa %02x\n", idx2 ,(idx2 >> 32));
-	          		codigo[contador_codigo-1] = idx2 >> 32;
+	          		//printf("imprimindo elemento %d em hexa %02x\n", idx2 ,(idx2 >> 24));
+	          		codigo[contador_codigo-1] = idx2 >> 24;
 	          		if(index_op != 2)
 	          			codigo[contador_codigo-3] = 0x83;
 	          		else
