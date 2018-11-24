@@ -22,17 +22,22 @@ int main(void) {
   /* Chama a função gerada */
   int i;
  //printf("cheguei 3\n");
-  for(i=0;i<100;i++){
+  for(i=0;i<200;i++){
   	printf("%02x ", code[i]);
   	if(i % 10 == 0)
   		printf("\n");
   }
  //printf("cheguei 4\n");
+  printf("\n");
+  
+    printf("entry = %02lx", (unsigned char*)funcSBF - (unsigned char*)code);
+  printf("\n");
 
   res = (*funcSBF)(9);
 
   printf("res = %d\n", res);
   /* Libera a memória utilizada */
   //libera_codigo(code);
+  return 0;
   
 }

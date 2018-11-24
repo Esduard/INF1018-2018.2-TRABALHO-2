@@ -10,4 +10,3 @@ v0 = call 1 v0
 v0 = v0 + v1
 ret v0
 end
-

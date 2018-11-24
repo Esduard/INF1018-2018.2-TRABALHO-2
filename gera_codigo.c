@@ -15,7 +15,7 @@ void gera_codigo (FILE *f, void **code, funcp *entry){
 
 	unsigned char* codigo;
 
-	codigo = (unsigned char *)malloc(sizeof(unsigned char) * 1024);
+	codigo = (unsigned char *)malloc(sizeof(unsigned char) * 2048);
 	if(codigo == NULL){
 		printf("falha na alocacao do vetor codigo\n"); 
 		exit(1);	
@@ -285,17 +285,18 @@ void gera_codigo (FILE *f, void **code, funcp *entry){
 
 	        contador_atu = 0;
 
-	        codigo[contador_codigo] = 0xe8;contador_codigo++;contador_atu++;
+	        int dif = (unsigned char *)vet_fun[fnum] - (unsigned char*)(&codigo[contador_codigo] + 5);
 
-	        int dif = (unsigned char *)vet_fun[fnum] - (&codigo[contador_codigo] + 4);
+	        codigo[contador_codigo] = 0xe8;contador_codigo++;contador_atu++;
 
 	        printf("call da fun %d (%p) na fun %d (%p)\n", fnum,vet_fun[fnum],index_fun-1,&codigo[contador_codigo] + 4);
 	        printf("dif = %d\n", dif);
 
-	         while(contador_atu <= 4){
-	          	codigo[contador_codigo] = dif >> 8*(contador_atu-1);contador_codigo++;contador_atu++;
-	          	printf("diff >> %d = %02x\n", 8 * (contador_atu-1), dif >> 8*(contador_atu-1));
-	        }
+	         for(contador_atu=0; contador_atu<4; contador_atu++){
+				codigo[contador_codigo] = dif;
+				dif = dif >> 8;
+				contador_codigo++;
+			}
 
 	        //movl %eax, pilha
 	        //vet_ret_pilha[3] ={0x89,0x45,0x00} sendo 0x00  -> 0x100 - (idx0 * 4 + 4);;
@@ -372,17 +373,17 @@ void gera_codigo (FILE *f, void **code, funcp *entry){
 
 	          int multi_byte = ((idx2 >= 128) | (idx2 <= -128)? 1:0);
 
-	          //printf("multi_byte = %d\n", multi_byte);
+	          printf("multi_byte = %d\n", multi_byte);
 
 	          if((index_varpc_2 == 2) & (multi_byte == 0)){
 	          	while(contador_atu < 4){
-	          	//printf("imprimindo elemento %02x atual = %d\n",vet_op_op2[index_op][2][contador_atu],contador_atu);
+	          	printf("imprimindo elemento %02x atual = %d\n",vet_op_op2[index_op][2][contador_atu],contador_atu);
 	          	codigo[contador_codigo] = vet_op_op2[index_op][2][contador_atu];contador_codigo++;contador_atu++;
 	          } 
 	          }
 	          else{
 	          	while(contador_atu < size_vet_op_op2[index_op][index_varpc_2]){
-	          		//printf("imprimindo elemento %02x atual = %d\n",vet_op_op2[index_op][index_varpc_2][contador_atu],contador_atu);
+	          		printf("imprimindo elemento %02x atual = %d\n",vet_op_op2[index_op][index_varpc_2][contador_atu],contador_atu);
 	          		codigo[contador_codigo] = vet_op_op2[index_op][index_varpc_2][contador_atu];contador_codigo++;contador_atu++;          	
 	          }
 	          }	
@@ -390,7 +391,8 @@ void gera_codigo (FILE *f, void **code, funcp *entry){
 	          
 
 	          if(index_varpc_2 == 0){
-	          	codigo[contador_codigo-1] = 0x100 - (idx2 * 4 + 4); 
+	          	codigo[contador_codigo-1] = 0x100 - (idx2 * 4 + 4);
+	          	printf("imprimindo var%d da pilha : %02x \n",idx2,0x100 - (idx2 * 4 + 4)); 
 	          }
 	          if(index_varpc_2 == 2){
 	          	
