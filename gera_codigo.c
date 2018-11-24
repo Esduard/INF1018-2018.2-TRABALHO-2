@@ -22,7 +22,7 @@ void gera_codigo (FILE *f, void **code, funcp *entry){
 	}
 
 	*code = codigo;
-	*entry = codigo;
+	*entry = (funcp)codigo;
 
 	int line = 1;
   	int  c;
@@ -40,13 +40,13 @@ void gera_codigo (FILE *f, void **code, funcp *entry){
   	unsigned char fim[2] = {0xc9,0xc3};
 
   	//vetor que guarda o valor que "contador_codigo" tinha no inicio de cada funcao
-  	int* vet_fun =(int*) malloc(sizeof(int) * 10);
+  	unsigned char** vet_fun =(unsigned char**) malloc(sizeof(unsigned char*) * 10);
   	int tam_index_fun = 10;
 
   	int index_fun = 0;
-
+  	//printf("chegeui 5\n");
 	while ((c = fgetc(f)) != EOF){
-
+	//printf("chegeui WHILE\n");
 		contador_atu = 0;
 
 		char varpc[3] = {'v','p','$'};
@@ -61,15 +61,15 @@ void gera_codigo (FILE *f, void **code, funcp *entry){
 	        
 	        
 
-	        vet_fun[index_fun] = contador_codigo; index_fun++;
+	        vet_fun[index_fun] = &codigo[contador_codigo]; index_fun++;
 	        if(index_fun == tam_index_fun){
 	        	tam_index_fun += 10;
-	        	vet_fun = (int *)realloc(vet_fun,sizeof(int) * tam_index_fun);
+	        	vet_fun = (unsigned char**)realloc(vet_fun,sizeof(unsigned char*) * tam_index_fun);
 	        }
 
 
 	        /* a ultima funcao que entry receber sera a "main" */
-	        *entry = &codigo[contador_codigo];
+	        *entry = (funcp)&codigo[contador_codigo];
 
 	        while(contador_atu < 8){
 	        	codigo[contador_codigo] = chamada[contador_atu];
@@ -94,16 +94,43 @@ void gera_codigo (FILE *f, void **code, funcp *entry){
 	        break;
 	      }
 	      case 'r': {  /* retorno incondicional */
-	        int idx0, idx1;
-	        char var0, var1;
+	        int idx0;
+	        char var0;
 	        if (fscanf(f, "et %c%d", &var0, &idx0) != 2) 
 	          error("comando invalido", line);
 	        printf("ret %c%d\n", var0, idx0);
 
-	        if(var0 == '$'){
-	        	/*codigo eh {0xb8, 0x00, 0x00, 0x00, 0x00}; sendo os campos 0x00 
+	        unsigned char vet_mov_ret[3][5] = {{0x8b,0x45,0x00},{0x89,0xf8},{0xb8, 0x00, 0x00, 0x00, 0x00}};
+
+	        int size_vet_mov_ret[3] ={3,2,5};
+
+	        while(varpc[index_varpc_1] != var0){
+	          	index_varpc_1++; if(index_varpc_1 == 3){ exit(1);}
+	          }
+
+	        while(contador_atu < size_vet_mov_ret[index_varpc_1]){
+	        	codigo[contador_codigo] = vet_mov_ret[index_varpc_1][contador_atu];contador_codigo++;contador_atu++;
+	        }
+
+	        if(index_varpc_1 == 0){
+	          	codigo[contador_codigo-1] = 0x100 - (idx0 * 4 + 4); 
+	          }
+	        if(index_varpc_1 == 2){
+	          	contador_codigo -= 4; 
+	          	contador_atu = 0;
+	          	while(contador_atu < 4){
+	        		codigo[contador_codigo] = idx0 >> 8*(contador_atu);
+	        		contador_codigo++;
+	        		contador_atu++;
+	        	}
+	          }
+
+
+
+	        /*if(var0 == '$'){
+	        	codigo eh {0xb8, 0x00, 0x00, 0x00, 0x00}; sendo os campos 0x00 
 				referente ao valor de idx0
-	        	*/
+	        	
 	        	codigo[contador_codigo] = 0xb8;
 	        	contador_codigo++;
 	        	contador_atu++;
@@ -114,8 +141,8 @@ void gera_codigo (FILE *f, void **code, funcp *entry){
 	        	}
 	        }
 			else if(var0 =='v'){
-				/* codigo eh {0x8b,0x45,0x00} sendo o campo 0x00
-				referente ao valor de 0x100-cte (em hexa) */
+				 codigo eh {0x8b,0x45,0x00} sendo o campo 0x00
+				referente ao valor de 0x100-cte (em hexa) 
 				codigo[contador_codigo] = 0x8b;contador_codigo++;contador_atu++;
 	        	
 	        	codigo[contador_codigo] = 0x45;contador_codigo++;contador_atu++;
@@ -125,11 +152,11 @@ void gera_codigo (FILE *f, void **code, funcp *entry){
 			}
 				
 			else{
-				/* codigo eh {0x89,0xf8} para passar %edi para %eax */
+				 codigo eh {0x89,0xf8} para passar %edi para %eax 
 				codigo[contador_codigo] = 0x89;contador_codigo++;contador_atu++;
 				codigo[contador_codigo] = 0xf8;contador_codigo++;contador_atu++;
 			}
-
+			*/
 	        
 	        break;
 	      }
@@ -171,7 +198,7 @@ void gera_codigo (FILE *f, void **code, funcp *entry){
 	        	}
 	          }
 
-	        unsigned char vet_jne[2] ={0x75,0x00}; //0x00 corresponde a dif entre contador agora com o contador na flag de destino
+	        //unsigned char vet_jne[2] ={0x75,0x00};0x00 corresponde a dif entre contador agora com o contador na flag de destino
 
 	        int size_vet_ret[3] ={3,2,5};
 	        
@@ -260,18 +287,22 @@ void gera_codigo (FILE *f, void **code, funcp *entry){
 
 	        codigo[contador_codigo] = 0xe8;contador_codigo++;contador_atu++;
 
-	        int diff = vet_fun[fnum] - vet_fun[index_fun-1];
+	        int dif = (unsigned char *)vet_fun[fnum] - (&codigo[contador_codigo] + 4);
 
-	         while(contador_atu < 4){
-	          	codigo[contador_codigo] = diff >> 8*(contador_atu-1);contador_codigo++;contador_atu++;
+	        printf("call da fun %d (%p) na fun %d (%p)\n", fnum,vet_fun[fnum],index_fun-1,&codigo[contador_codigo] + 4);
+	        printf("dif = %d\n", dif);
+
+	         while(contador_atu <= 4){
+	          	codigo[contador_codigo] = dif >> 8*(contador_atu-1);contador_codigo++;contador_atu++;
+	          	printf("diff >> %d = %02x\n", 8 * (contador_atu-1), dif >> 8*(contador_atu-1));
 	        }
 
 	        //movl %eax, pilha
-	        //vet_ret_pilha[3] ={0x89,0x45,0x00};
+	        //vet_ret_pilha[3] ={0x89,0x45,0x00} sendo 0x00  -> 0x100 - (idx0 * 4 + 4);;
 
 	        codigo[contador_codigo] = 0x89;contador_codigo++;contador_atu++;
 	        codigo[contador_codigo] = 0x45;contador_codigo++;contador_atu++;
-	        codigo[contador_codigo] = 0x100 - (idx0 * 4 + 4)
+	        codigo[contador_codigo] = 0x100 - (idx0 * 4 + 4);contador_codigo++;contador_atu++;
 
 	        //movl -18(%rbp), %edi
 
@@ -372,8 +403,8 @@ void gera_codigo (FILE *f, void **code, funcp *entry){
 	        	}
 	          	}
 	          	else{
-	          		//printf("imprimindo elemento %d em hexa %02x\n", idx2 ,(idx2 >> 24));
-	          		codigo[contador_codigo-1] = idx2 >> 24;
+	          		//printf("imprimindo elemento %d em hexa %02x\n", idx2);
+	          		codigo[contador_codigo-1] = idx2;
 	          		if(index_op != 2)
 	          			codigo[contador_codigo-3] = 0x83;
 	          		else
