@@ -31,6 +31,7 @@ fun2ne:
 	movl %eax,-0x08(%rbp)
 	movl -0x18(%rbp),%edi
 	movl %edi,-0x18(%rbp)
+	movl -0x04(%rbp),%edi
 	call foo
 	movl %eax,-0x04(%rbp)
 	movl -0x18(%rbp),%edi

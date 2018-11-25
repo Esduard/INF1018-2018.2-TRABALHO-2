@@ -1,0 +1,6 @@
+function
+ret $0
+end
+function
+ret $1
+end
