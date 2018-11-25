@@ -17,9 +17,9 @@ foo:
 	push %rbp
 	movq %rsp,%rbp
 	subq $32,%rsp
-	cmpl 0x0,%edi
+	cmpl $0,%edi
 	jne fun2ne
-	movl 0x0,%eax
+	movl $0,%eax
 	leave
 	ret
 fun2ne:

@@ -33,7 +33,7 @@ int main(void) {
     printf("entry = %02lx", (unsigned char*)funcSBF - (unsigned char*)code);
   printf("\n");
 
-  res = (*funcSBF)(9);
+  res = (*funcSBF)(10);
 
   printf("res = %d\n", res);
   /* Libera a memória utilizada */

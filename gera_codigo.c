@@ -37,7 +37,7 @@ void gera_codigo (FILE *f, void **code, funcp *entry){
    9:	c3                   	retq */
   	unsigned char chamada[8] = {0x55,0x48,0x89,0xe5,0x48,0x83,0xec,0x20};
 
-  	unsigned char fim[5] = {0x48,0x89,0xec,0x5d,0xc3};
+  	unsigned char fim[2] = {0xc9,0xc3};
 
   	//vetor que guarda o valor que "contador_codigo" tinha no inicio de cada funcao
   	unsigned char** vet_fun =(unsigned char**) malloc(sizeof(unsigned char*) * 10);
@@ -83,7 +83,7 @@ void gera_codigo (FILE *f, void **code, funcp *entry){
 	        char c0;
 	        if (fscanf(f, "nd%c", &c0) != 1)
 	          error("comando invalido", line);
-	      	while(contador_atu < 5){
+	      	while(contador_atu < 2){
 	        	codigo[contador_codigo] = fim[contador_atu];
 	        	contador_codigo++;
 	        	contador_atu++;
