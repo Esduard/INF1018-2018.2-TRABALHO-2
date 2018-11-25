@@ -21,11 +21,11 @@ foo:
 
 	movl %edi, %r11d
 
-	movl -0x04(%rsp), %edi
-	movl -0x08(%rsp), %edi
-	movl -0x0c(%rsp), %edi
-	movl -0x10(%rsp), %edi
-	movl -0x14(%rsp), %edi
+	movl -0x04(%rbp), %edi
+	movl -0x08(%rbp), %edi
+	movl -0x0c(%rbp), %edi
+	movl -0x10(%rbp), %edi
+	movl -0x14(%rbp), %edi
 
 	movl $1, %edi
 	movl $100, %edi

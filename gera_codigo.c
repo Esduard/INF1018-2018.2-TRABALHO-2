@@ -255,9 +255,9 @@ void gera_codigo (FILE *f, void **code, funcp *entry){
 
 	          contador_atu = 0;
 
-	          unsigned char vet_mov_arg[3][5] ={{0x8b,0x7c,0x24,0x00},{0x00},{0xbf,0x00,0x00,0x00,0x00}};
+	          unsigned char vet_mov_arg[3][5] ={{0x8b,0x7d,0x00},{0x00},{0xbf,0x00,0x00,0x00,0x00}};
 
-	          int size_vet_mov_arg[3] = {4,1,5};
+	          int size_vet_mov_arg[3] = {3,1,5};
 
 	        while(varpc[index_varpc_2] != var1){
 	          	index_varpc_2++; if(index_varpc_2 == 3){ exit(1);}
