@@ -37,7 +37,7 @@ void gera_codigo (FILE *f, void **code, funcp *entry){
    9:	c3                   	retq */
   	unsigned char chamada[8] = {0x55,0x48,0x89,0xe5,0x48,0x83,0xec,0x20};
 
-  	unsigned char fim[2] = {0xc9,0xc3};
+  	unsigned char fim[5] = {0x48,0x89,0xec,0x5d,0xc3};
 
   	//vetor que guarda o valor que "contador_codigo" tinha no inicio de cada funcao
   	unsigned char** vet_fun =(unsigned char**) malloc(sizeof(unsigned char*) * 10);
@@ -83,7 +83,7 @@ void gera_codigo (FILE *f, void **code, funcp *entry){
 	        char c0;
 	        if (fscanf(f, "nd%c", &c0) != 1)
 	          error("comando invalido", line);
-	      	while(contador_atu < 2){
+	      	while(contador_atu < 5){
 	        	codigo[contador_codigo] = fim[contador_atu];
 	        	contador_codigo++;
 	        	contador_atu++;
@@ -253,7 +253,7 @@ void gera_codigo (FILE *f, void **code, funcp *entry){
 	          	codigo[contador_codigo] = vet_save_pilha[contador_atu];contador_codigo++;contador_atu++;
 	          }
 
-
+	          contador_atu = 0;
 
 	          unsigned char vet_mov_arg[3][5] ={{0x8b,0x7c,0x24,0x00},{0x00},{0xbf,0x00,0x00,0x00,0x00}};
 
