@@ -1,0 +1,21 @@
+function
+v2= v1 + $-2
+zret v2 $3
+ret $4
+end
+
+function
+v1=v0+$12
+zret v1 $2
+v1= call 0 v1
+ret v1
+end
+
+function
+v0=p0 + $1
+zret v0 $1
+v0 = call 1 v0
+ret v0
+end
+
+
