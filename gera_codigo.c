@@ -1,3 +1,5 @@
+/* Eduardo Motta 1720334 3WA */
+/* Luiz Fellipe Augusto 1711256 3WA */
 #include <stdio.h>
 #include <stdlib.h>
 #include<string.h>
@@ -396,7 +398,8 @@ void gera_codigo (FILE *f, void **code, funcp *entry){
     	line ++;
     	fscanf(f, " ");
   	}
-  	codigo = (unsigned char *)realloc(codigo,sizeof(unsigned char) * contador_codigo);
+  	//codigo = (unsigned char *)realloc(codigo,sizeof(unsigned char) * contador_codigo);
+	free(vet_fun);
 }
 
 
