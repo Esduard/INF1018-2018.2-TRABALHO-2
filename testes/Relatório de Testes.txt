@@ -6,6 +6,17 @@ O trabalho está funcionando com todos os exemplos citados abaixo:
 
 Primeira Função customizada:
 
+function
+v0 = p0 * $4
+zret v0 $1
+v1 = v0 + p0
+v2 = p0 * v1
+zret v2 $2
+v3= v2 - $20
+zret v3 $3
+ret v3
+end
+
 Para parametro = 10 -> retorno = 480 (CORRETO)
 Para parametro = 2 -> retorno = 3 (CORRETO)
 Para parametro = 300 -> retorno = 449980 (CORRETO)
@@ -13,15 +24,15 @@ Para parametro = 0 -> retorno = 1 (CORRETO)
 Para parametro = 50 -> retorno = 12480  (CORRETO)
 Para parametro = 250 -> retorno = 312480 (CORRETO)
 
-Quarta Função customizada:
+Segunda Função customizada:
 
 function
-v0 = p0 - &3
+v0 = p0 - $3
 v0 = v0 * $5
 v1 = v0 - $30
 zret v1 $1
-v2 = v1 - &10
-v0 = v2 + &5
+v2 = v1 - $10
+v0 = v2 + $5
 zret v0 v2
 ret v0
 end
@@ -31,7 +42,7 @@ Para parametro = 10 -> retorno = -5 (CORRETO)
 Para parametro = 11 -> retorno = 5 (CORRETO)
 Para parametro = 0 -> retorno = -50 (CORRETO)
 
-Quinta Função customizada:
+Terceira Função customizada:
 
 function
 v0 = p0 + $-10
@@ -44,7 +55,7 @@ Para parametro = -10 -> retorno = -20 (CORRETO)
 Para parametro = 190 -> retorno = 180 (CORRETO)
 Para parametro = -250 -> retorno = -260 (CORRETO)
 
-Sexta Função customizada:
+Quarta Função customizada:
 
 function
 v0 = p0 + $1
@@ -57,7 +68,7 @@ Para parametro = 10 -> retorno = 10 (CORRETO)
 Para parametro = 0 -> retorno = 0 (CORRETO)
 Para parametro = -10 -> retorno = 0 (CORRETO)
 
-Setima Função (Do slide)
+Quinta Função (Do slide)
 
 function
 zret p0 $1
@@ -71,7 +82,7 @@ end
 Para parametro = 10 -> retorno = 3628800 (CORRETO)
 
 
-Oitava Função (Do slide)
+Sexta Função (Do slide)
 
 function
 v0 = p0 * p0
@@ -88,7 +99,7 @@ end
 
 Para parametro = 10 -> retorno = 385 (CORRETO)
 
-Nona Função Customizada
+Setima Função Customizada
 
 function
 v2= p0 + $-2
