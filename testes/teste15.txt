@@ -1,0 +1,10 @@
+function
+v0 = p0 * $4
+zret v0 $1
+v1 = v0 + p0
+v2 = p0 * v1
+zret v2 $2
+v3 = v2 - $20
+zret v3 $3
+ret v3
+end
