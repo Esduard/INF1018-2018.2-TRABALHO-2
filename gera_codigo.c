@@ -31,12 +31,7 @@ void gera_codigo (FILE *f, void **code, funcp *entry){
   	int contador_codigo = 0;
   	int contador_atu = 0;
 
-  	/* chamada de funcao e alocacao de variaveis na pilha  
-   0:	55                   	push   %rbp
-   1:	48 89 e5             	mov    %rsp,%rbp
-   4:	48 83 ec 20          	sub    $0x20,%rsp
-   8:	c9                   	leaveq 
-   9:	c3                   	retq */
+  	/* chamada de funcao e alocacao de variaveis na pilha  */
   	unsigned char chamada[8] = {0x55,0x48,0x89,0xe5,0x48,0x83,0xec,0x20};
 
   	unsigned char fim[2] = {0xc9,0xc3};
@@ -48,7 +43,7 @@ void gera_codigo (FILE *f, void **code, funcp *entry){
 	//vetor auxiliar de tamanhos de vet_mov_ret
 	 int size_vet_mov_ret[3] ={3,2,5};
 
-  	//vetor que guarda o valor que "contador_codigo" tinha no inicio de cada funcao
+  	//vetor que guarda o endereco do inicio de cada funcao
   	unsigned char** vet_fun =(unsigned char**) malloc(sizeof(unsigned char*) * 10);
   	int tam_index_fun = 10;
 
@@ -118,7 +113,7 @@ void gera_codigo (FILE *f, void **code, funcp *entry){
 	        while(contador_atu < size_vet_mov_ret[index_varpc_1]){
 	        	codigo[contador_codigo] = vet_mov_ret[index_varpc_1][contador_atu];contador_codigo++;contador_atu++;
 	        }
-			//atribução de valores caso estejamos lidando com v ou $
+		//atribução de valores caso estejamos lidando com v ou $
 	        if(index_varpc_1 == 0){
 	          	codigo[contador_codigo-1] = 0x100 - (idx0 * 4 + 4); 
 	          }
@@ -143,8 +138,8 @@ void gera_codigo (FILE *f, void **code, funcp *entry){
 			/* cada vetor da matriz corresponde ao codigo de maquina 
 			referente a comparar 0 a uma v,p ou $ respectivamente*/
 	        unsigned char vet_cmp_op1[3][10] ={{0x83,0x7d,0x00,0x00},
-	        									{0x83,0xff,0x00},
-	        									{0x41, 0xba, 0x00, 0x00, 0x00, 0x00,0x41, 0x83, 0xfa, 0x00}};
+	        				   {0x83,0xff,0x00},
+	        				   {0x41, 0xba, 0x00, 0x00, 0x00, 0x00,0x41, 0x83, 0xfa, 0x00}};
 			
 	        int size_vet_cmp_op1[3] ={4,3,10};
 
@@ -223,6 +218,8 @@ void gera_codigo (FILE *f, void **code, funcp *entry){
 
 	          contador_atu = 0;
 
+		  /* cada vetor da matriz corresponde ao codigo de maquina 
+		  referente a mover uma v,p ou $ para o %edi respectivamente*/		
 	          unsigned char vet_mov_arg[3][5] ={{0x8b,0x7d,0x00},{0x00},{0xbf,0x00,0x00,0x00,0x00}};
 
 	          int size_vet_mov_arg[3] = {3,1,5};
@@ -269,7 +266,7 @@ void gera_codigo (FILE *f, void **code, funcp *entry){
 
 	        //movl -18(%rbp), %edi
 
-			codigo[contador_codigo] = 0x8b;contador_codigo++;contador_atu++;
+		codigo[contador_codigo] = 0x8b;contador_codigo++;contador_atu++;
 	        codigo[contador_codigo] = 0x7d;contador_codigo++;contador_atu++;
 	        codigo[contador_codigo] = 0xe8;contador_codigo++;contador_atu++;
 	        	        
@@ -324,26 +321,22 @@ void gera_codigo (FILE *f, void **code, funcp *entry){
 	          contador_atu = 0;
 			  
 			/* o vetor de ordem 3 tem sua primeira ordem correspondente as operacoes de 
-			soma,subtracao ou multiplicacao, a segunda ordem corresponde a uma v, p ou $ respectivamente 
+			soma,subtracao ou multiplicacao, a segunda ordem corresponde a uma v, p ou $ respectivamente. 
 			
-			esboço:
-					variavel	parametro	$
-			add			I			I		I
-			sub			I			I		I
-			imul		I			I		I
 			
-			todos os codigos fazem referencia a uma operacao a ser realizada e armazenada no %r10d
+			todos os codigos fazem referencia a uma operacao a ser realizada com um varpc e armazenada no %r10d
 			
 			*/
 	          unsigned char vet_op_op2[3][3][7] ={{{0x44,0x03,0x55,0x00},{0x41,0x01,0xfa},{0x41,0x81,0xc2,0x00,0x00,0x00,0x00}},
-	          									{{0x44,0x2b,0x55,0x00},{0x41,0x29,0xfa},{0x41,0x81,0xea,0x00,0x00,0x00,0x00}},
-	          									{{0x44,0x0f,0xaf,0x55,0x00},{0x44,0x0f,0xaf,0xd7},{0x45,0x69,0xd2,0x00,0x00,0x00,0x00}}};
-			//matriz auxiliar de tamanhos de cada codigo	
+	          					{{0x44,0x2b,0x55,0x00},{0x41,0x29,0xfa},{0x41,0x81,0xea,0x00,0x00,0x00,0x00}},
+	          					{{0x44,0x0f,0xaf,0x55,0x00},{0x44,0x0f,0xaf,0xd7},{0x45,0x69,0xd2,0x00,0x00,0x00,0x00}}};
+		//matriz auxiliar de tamanhos de cada codigo	
 	          int size_vet_op_op2[3][3] = {{4,3,7},{4,3,7},{5,4,7}};
 
+		  //variavel para otimizar operacoes com constantes
 	          int multi_byte = ((idx2 >= 128) | (idx2 <= -128)? 1:0);
 
-	          if((index_varpc_2 == 2) & (multi_byte == 0)){
+	          if((index_varpc_2 == 2) & (multi_byte == 0)){ //condicional para operacoes aritimeticas com constantes menores que 128
 	          	while(contador_atu < 4){
 	          	codigo[contador_codigo] = vet_op_op2[index_op][2][contador_atu];contador_codigo++;contador_atu++;
 	          } 
@@ -360,8 +353,6 @@ void gera_codigo (FILE *f, void **code, funcp *entry){
 	          	codigo[contador_codigo-1] = 0x100 - (idx2 * 4 + 4);
 	          }
 	          if(index_varpc_2 == 2){
-	          	
-
 	          	if(multi_byte == 1){
 	          		contador_atu = 0;
 	          		contador_codigo -= 4; 
@@ -369,7 +360,7 @@ void gera_codigo (FILE *f, void **code, funcp *entry){
 	        		codigo[contador_codigo] = idx2 >> 8*(contador_atu);contador_codigo++;contador_atu++;
 	        	}
 	          	}
-	          	else{
+	          	else{ //correcao do codigo de maquina de operacoes aritimeticas com constantes menores que 128
 	          		codigo[contador_codigo-1] = idx2;
 	          		if(index_op != 2)
 	          			codigo[contador_codigo-3] = 0x83;
@@ -381,6 +372,7 @@ void gera_codigo (FILE *f, void **code, funcp *entry){
 			
 	          contador_atu = 0;
 
+		  //move o conteudo de %r10d para a variavel correspondente de idx0		
 	          unsigned char vet_res[4] ={0x44,0x89,0x55,0x00};
 
 	          while(contador_atu < 4){
@@ -398,7 +390,7 @@ void gera_codigo (FILE *f, void **code, funcp *entry){
     	line ++;
     	fscanf(f, " ");
   	}
-  	//codigo = (unsigned char *)realloc(codigo,sizeof(unsigned char) * contador_codigo);
+  	codigo = (unsigned char *)realloc(codigo,sizeof(unsigned char) * contador_codigo);
 	free(vet_fun);
 }
 
