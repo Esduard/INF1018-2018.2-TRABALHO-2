@@ -39,6 +39,13 @@ void gera_codigo (FILE *f, void **code, funcp *entry){
 
   	unsigned char fim[2] = {0xc9,0xc3};
 
+	/* cada vetor da matriz corresponde ao codigo de maquina 
+	referente a retornar uma v,p ou $ respectivamente*/
+	unsigned char vet_mov_ret[3][5] = {{0x8b,0x45,0x00},{0x89,0xf8},{0xb8, 0x00, 0x00, 0x00, 0x00}};
+
+	//vetor auxiliar de tamanhos de vet_mov_ret
+	 int size_vet_mov_ret[3] ={3,2,5};
+
   	//vetor que guarda o valor que "contador_codigo" tinha no inicio de cada funcao
   	unsigned char** vet_fun =(unsigned char**) malloc(sizeof(unsigned char*) * 10);
   	int tam_index_fun = 10;
@@ -76,7 +83,7 @@ void gera_codigo (FILE *f, void **code, funcp *entry){
 	        	contador_codigo++;
 	        	contador_atu++;
 	        }
-	        printf("function\n");
+	        
 	        break;
 	      }
 	      case 'e': { /* end */
@@ -90,7 +97,7 @@ void gera_codigo (FILE *f, void **code, funcp *entry){
 	        }
 
 
-	        printf("end\n");
+	        
 	        break;
 	      }
 	      case 'r': {  /* retorno incondicional */
@@ -98,13 +105,9 @@ void gera_codigo (FILE *f, void **code, funcp *entry){
 	        char var0;
 	        if (fscanf(f, "et %c%d", &var0, &idx0) != 2) 
 	          error("comando invalido", line);
-	        printf("ret %c%d\n", var0, idx0);
+	       
 
-			/* cada vetor da matriz corresponde ao codigo de maquina 
-			referente a retornar uma v,p ou $ respectivamente*/
-	        unsigned char vet_mov_ret[3][5] = {{0x8b,0x45,0x00},{0x89,0xf8},{0xb8, 0x00, 0x00, 0x00, 0x00}};
-			//vetor auxiliar de tamanhos
-	        int size_vet_mov_ret[3] ={3,2,5};
+		
 
 	        while(varpc[index_varpc_1] != var0){
 	          	index_varpc_1++; if(index_varpc_1 == 3){ exit(1);}
@@ -133,7 +136,7 @@ void gera_codigo (FILE *f, void **code, funcp *entry){
 	        char var0, var1;
 	        if (fscanf(f, "ret %c%d %c%d", &var0, &idx0, &var1, &idx1) != 4) 
 	          error("comando invalido", line);
-	        printf("zret %c%d %c%d\n", var0, idx0, var1, idx1);
+	       
 			
 			/* cada vetor da matriz corresponde ao codigo de maquina 
 			referente a comparar 0 a uma v,p ou $ respectivamente*/
@@ -169,21 +172,14 @@ void gera_codigo (FILE *f, void **code, funcp *entry){
 	          }
 
 	        
-			//vetor que indica o numero de bytes para instrução de movl varpc1, %eax
-	        int size_vet_ret[3] ={3,2,5};
-	        
 	       	codigo[contador_codigo] = 0x75;contador_codigo++;
-	        codigo[contador_codigo] = size_vet_ret[index_varpc_2] + 2;contador_codigo++;
+	        codigo[contador_codigo] = size_vet_mov_ret[index_varpc_2] + 2;contador_codigo++;
 
 
 	        contador_atu = 0;
-			
-			/* cada vetor da matriz corresponde ao codigo de maquina 
-			referente a retornar uma v,p ou $ respectivamente*/
-	        unsigned char vet_ret[3][5] ={{0x8b,0x45,0x00},{0x89,0xf8},{0xb8,0x00,0x00,0x00,0x00}};
 
-	        while(contador_atu < size_vet_ret[index_varpc_2]){
-	        	codigo[contador_codigo] = vet_ret[index_varpc_2][contador_atu];contador_codigo++;contador_atu++;
+	        while(contador_atu < size_vet_mov_ret[index_varpc_2]){
+	        	codigo[contador_codigo] = vet_mov_ret[index_varpc_2][contador_atu];contador_codigo++;contador_atu++;
 	        }
 
 	        if(index_varpc_2 == 0){
@@ -200,12 +196,12 @@ void gera_codigo (FILE *f, void **code, funcp *entry){
 	          }
 
 	        codigo[contador_codigo] = 0xc9;contador_codigo++;contador_atu++;
-			codigo[contador_codigo] = 0xc3;contador_codigo++;contador_atu++;
+		codigo[contador_codigo] = 0xc3;contador_codigo++;contador_atu++;
 	        break;
 	      }
 	      case 'v': {  /* atribuicao */
 	        int idx0;
-	        char var0 = c, c0;
+	        char c0;
 	        if (fscanf(f, "%d = %c",&idx0, &c0) != 2)
 	          error("comando invalido",line);
 
@@ -214,7 +210,7 @@ void gera_codigo (FILE *f, void **code, funcp *entry){
 	          char var1;
 	          if (fscanf(f, "all %d %c%d\n", &fnum, &var1, &idx1) != 3)
 	            error("comando invalido",line);
-	          printf("%c%d = call %d %c%d\n",var0, idx0, fnum, var1, idx1);
+	          
 
 	          //salvar parametro antes de sobescrever edi
 	          unsigned  char vet_save_pilha[3] ={0x89, 0x7d, 0xe8};
@@ -287,8 +283,7 @@ void gera_codigo (FILE *f, void **code, funcp *entry){
 	          char var1 = c0, var2, op;
 	          if (fscanf(f, "%d %c %c%d", &idx1, &op, &var2, &idx2) != 4)
 	            error("comando invalido", line);
-	          printf("%c%d = %c%d %c %c%d\n", var0, idx0, var1, idx1, op, var2, idx2);
-
+	         
 	          while(varpc[index_varpc_1] != var1){
 	          	index_varpc_1++; if(index_varpc_1 == 3){ exit(1);}
 	          }
