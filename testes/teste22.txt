@@ -1,0 +1,7 @@
+function
+zret $0 $1
+v0 = p0 - $1
+v0 = call 0 v0
+v0 = p0 * v0
+ret v0
+end

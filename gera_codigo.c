@@ -167,7 +167,7 @@ void gera_codigo (FILE *f, void **code, funcp *entry){
 	        		contador_atu++;
 	        	}
 	          }
-
+	          contador_codigo += 4;
 	        
 	       	codigo[contador_codigo] = 0x75;contador_codigo++;
 	        codigo[contador_codigo] = size_vet_mov_ret[index_varpc_2] + 2;contador_codigo++;
@@ -360,9 +360,9 @@ void gera_codigo (FILE *f, void **code, funcp *entry){
 	        		codigo[contador_codigo] = idx2 >> 8*(contador_atu);contador_codigo++;contador_atu++;
 	        	}
 	          	}
-	          	else{ //correcao do codigo de maquina de operacoes aritimeticas com constantes menores que 128
+	          	else{ 
 	          		codigo[contador_codigo-1] = idx2;
-	          		if(index_op != 2)
+	          		if(index_op != 2) //correcao do codigo de maquina de operacoes aritimeticas com constantes menores que 128
 	          			codigo[contador_codigo-3] = 0x83;
 	          		else
 	          			codigo[contador_codigo-3] = 0x6b;

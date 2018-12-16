@@ -12,7 +12,7 @@ int main(void) {
   int res;
   //printf("cheguei 1\n");
   /* Abre o arquivo para leitura */
-  fp = fopen("/home/ccp/c1720334/inf1018/inf1018-trab-2-2018.2/testes/teste21.txt", "r");
+  fp = fopen("/home/eduardo/inf1018/inf1018-trab-2-2018.2/testes/teste22.txt", "r");
   if(fp == NULL){
     printf("falha abertura arq\n"); exit(1);
    //printf("cheguei 2\n");
@@ -33,7 +33,7 @@ int main(void) {
     printf("entry = %02lx", (unsigned char*)funcSBF - (unsigned char*)code);
   printf("\n");
 
-  res = (*funcSBF)(-13);
+  res = (*funcSBF)(0);
 
   printf("res = %d\n", res);
   /* Libera a memória utilizada */

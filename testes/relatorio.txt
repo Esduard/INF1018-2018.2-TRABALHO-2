@@ -125,10 +125,3 @@ Para parametro = 10 -> retorno = 4 (CORRETO)
 Para parametro = -1 -> retorno = 1 (CORRETO)
 Para parametro = -13 -> retorno = 2 (CORRETO)
 Para parametro = -11 -> retorno = 3 (CORRETO)
-
-
-
-
-
-
-
